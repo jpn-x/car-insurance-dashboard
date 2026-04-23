@@ -166,6 +166,16 @@ body {
 .shaken-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .shaken-tag { display: inline-flex; align-items: center; gap: 3px; background: rgba(0,0,0,0.04); border: 1px solid var(--bdr); border-radius: 6px; padding: 2px 7px; font-size: 10.5px; color: var(--sub); white-space: nowrap; }
 .shaken-tag.exp-near { border-color: #f39c12; color: #e67e22; background: #fff8ee; }
+.shaken-list { background: var(--white); border-radius: var(--r); box-shadow: var(--sh); margin-bottom: 12px; overflow: hidden; }
+.shaken-list-hdr { background: #f8f4ff; padding: 8px 14px; font-size: 11px; font-weight: 700; color: #7d3c98; border-bottom: 1px solid #e8e0f0; letter-spacing: 0.3px; }
+.shaken-list-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid var(--bdr); gap: 8px; }
+.shaken-list-row:last-child { border-bottom: none; }
+.sl-name { font-size: 12.5px; font-weight: 700; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sl-date { font-size: 12px; font-weight: 600; color: var(--sub); flex-shrink: 0; }
+.sl-days { font-size: 11px; font-weight: 700; flex-shrink: 0; padding: 2px 8px; border-radius: 20px; }
+.sl-days.urg { background: #fdecea; color: var(--urg); }
+.sl-days.wrn { background: #fff3e0; color: var(--wrn); }
+.sl-days.saf { background: #e8f5e9; color: var(--ok); }
 </style>
 </head>
 <body>
@@ -411,13 +421,27 @@ function renderAll() {
     </div>`;
   });
 
+  const shakenSorted = [...CARS].sort((a,b) => new Date(a.shakenExpiry)-new Date(b.shakenExpiry));
+  const shakenHtml = `<div class="shaken-list">
+    <div class="shaken-list-hdr">🔧 車検期限 早い順</div>
+    ${shakenSorted.map(c => {
+      const d = days(c.shakenExpiry);
+      const cl = cc(d);
+      return `<div class="shaken-list-row">
+        <span class="sl-name">${c.name}</span>
+        <span class="sl-date">${toReiwa(c.shakenExpiry)}</span>
+        <span class="sl-days ${cl}">残${d}日</span>
+      </div>`;
+    }).join('')}
+  </div>`;
+
   document.getElementById('pg-all').innerHTML = `
     <div class="stats">
       <div class="sbox"><div class="n cblue">5</div><div class="l">台契約中</div></div>
       <div class="sbox"><div class="n cred">${urgCnt}</div><div class="l">90日以内更新</div></div>
       <div class="sbox"><div class="n cpur" style="font-size:15px">¥${(total/10000).toFixed(1)}万</div><div class="l">年間合計</div></div>
     </div>
-    ${alertHtml}${jibaAlertHtml}
+    ${alertHtml}${shakenHtml}${jibaAlertHtml}
     <div class="slabel" style="display:flex;align-items:center;justify-content:space-between;">更新期限順（任意保険）<span style="font-size:10px;color:var(--sub);font-weight:400;letter-spacing:0;">※タップで詳細表示</span></div>
     ${cards}
     <div class="totbox">
