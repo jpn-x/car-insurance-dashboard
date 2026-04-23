@@ -36,16 +36,22 @@ body {
 .hdr-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .hdr h1 { font-size: 15px; font-weight: 800; }
 .hdr .badge { font-size: 11px; background: rgba(255,255,255,0.15); border-radius: 20px; padding: 3px 10px; }
-.tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
-.tabs::-webkit-scrollbar { display: none; }
-.tab {
-  flex: 0 0 auto; padding: 8px 13px 9px;
-  font-size: 12px; font-weight: 600;
-  color: rgba(255,255,255,0.4); cursor: pointer;
-  white-space: nowrap; border-bottom: 2px solid transparent;
-  transition: all 0.2s; user-select: none;
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 }
-.tab.on { color: #fff; border-bottom-color: #5dade2; }
+.tab {
+  padding: 7px 4px 8px;
+  font-size: 11.5px; font-weight: 600;
+  color: rgba(255,255,255,0.4); cursor: pointer;
+  text-align: center; white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  transition: all 0.2s; user-select: none;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.tab:nth-child(-n+3) { border-top: none; }
+.tab.on { color: #fff; border-bottom-color: #5dade2; background: rgba(255,255,255,0.05); }
 
 /* PAGES */
 .page { display: none; padding: 12px; }
