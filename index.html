@@ -174,11 +174,11 @@ body {
   </div>
   <div class="tabs" id="mainTabs">
     <div class="tab on"  onclick="gt('all',this)">📋 全台一覧</div>
-    <div class="tab"     onclick="gt('c0',this)">プリウス①</div>
-    <div class="tab"     onclick="gt('c1',this)">スズキ</div>
+    <div class="tab"     onclick="gt('c0',this)">プリウスα</div>
+    <div class="tab"     onclick="gt('c4',this)">レクサス</div>
     <div class="tab"     onclick="gt('c2',this)">タント</div>
-    <div class="tab"     onclick="gt('c3',this)">プリウス②</div>
-    <div class="tab"     onclick="gt('c4',this)">レクサス IS</div>
+    <div class="tab"     onclick="gt('c3',this)">30プリウス</div>
+    <div class="tab"     onclick="gt('c1',this)">キャリィ</div>
   </div>
 </div>
 
@@ -198,8 +198,8 @@ const TODAY = new Date('2026-04-23');
 
 const CARS = [
   {
-    id:'c0', label:'プリウス①',
-    name:'プリウス ①', maker:'トヨタ', model:'ZVW40 / 1800 アルファ S',
+    id:'c0', label:'プリウスα',
+    name:'プリウスアルファ 赤', maker:'トヨタ', model:'ZVW40 / 1800 アルファ S',
     use:'自家用普通乗用車', firstReg:'平成24年11月',
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'10911810', renewalDate:'2026-06-05',
@@ -212,13 +212,13 @@ const CARS = [
     note:'⚠ チューリッヒサイトで自動継続の状況を必ず確認してください（次回継続済の場合は2027/6/5が期限）。'
   },
   {
-    id:'c1', label:'スズキ',
-    name:'スズキ DC51T', maker:'スズキ', model:'DC51T（軽貨物）',
+    id:'c1', label:'キャリィ',
+    name:'軽トラ スズキ キャリィ', maker:'スズキ', model:'DC51T（軽貨物）',
     use:'自家用軽四輪貨物', firstReg:'平成8年12月',
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'11017944', renewalDate:'2026-10-09',
     grade:'6等級', premium:17360,
-    ageLimit:'なし（制限なし）', lifeIns:'なし',
+    ageLimit:'30歳以上', lifeIns:'なし',
     collision:'なし', roadside:'なし', selfPay:'なし',
     plate:'なにわ 480 な 9427', chassisNo:'DC51T-113803',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61H8K9269号',
@@ -232,7 +232,7 @@ const CARS = [
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'15031741', renewalDate:'2026-10-26',
     grade:'8等級', premium:18720,
-    ageLimit:'なし（制限なし）', lifeIns:'3,000万円（搭乗中のみ）',
+    ageLimit:'30歳以上', lifeIns:'3,000万円（搭乗中のみ）',
     collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）',
     plate:'なにわ 584 よ 225', chassisNo:'L375S-0289759',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61KOW1202号',
@@ -240,13 +240,13 @@ const CARS = [
     note:''
   },
   {
-    id:'c3', label:'プリウス②',
-    name:'プリウス ②', maker:'トヨタ', model:'ZVW30 / 1800 G',
+    id:'c3', label:'30プリウス',
+    name:'愛媛 30プリウス 白', maker:'トヨタ', model:'ZVW30 / 1800 G',
     use:'自家用普通乗用車', firstReg:'平成22年8月',
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'11358107', renewalDate:'2026-12-25',
     grade:'11等級', premium:36740,
-    ageLimit:'ゴールド免許割引', lifeIns:'3,000万円（搭乗中のみ）',
+    ageLimit:'30歳以上', lifeIns:'3,000万円（搭乗中のみ）',
     collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）',
     plate:'愛媛 339 み 211', chassisNo:'ZVW30-0219070',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61K8S8573号',
@@ -254,12 +254,12 @@ const CARS = [
     note:''
   },
   {
-    id:'c4', label:'レクサス IS',
+    id:'c4', label:'レクサス',
     name:'レクサス IS', maker:'レクサス', model:'GSE20 / IS 350',
     use:'自家用普通乗用車', firstReg:'平成18年11月',
     insurer:'アクサダイレクト', chipCls:'axa',
     policyNo:'459956932', renewalDate:'2027-03-25',
-    grade:'7S等級', premium:47450,
+    grade:'7S等級', premium:66000,
     ageLimit:'21歳以上補償', lifeIns:'5,000万円（搭乗中のみ）',
     collision:'なし', roadside:'AXAプレミアムロードサービス', selfPay:'—',
     plate:'なにわ 34L は 1001', chassisNo:'GSE20-2032382',
@@ -395,7 +395,7 @@ function renderAll() {
       <div class="sbox"><div class="n cpur" style="font-size:15px">¥${(total/10000).toFixed(1)}万</div><div class="l">年間合計</div></div>
     </div>
     ${alertHtml}${jibaAlertHtml}
-    <div class="slabel">更新期限順（任意保険）</div>
+    <div class="slabel" style="display:flex;align-items:center;justify-content:space-between;">更新期限順（任意保険）<span style="font-size:10px;color:var(--sub);font-weight:400;letter-spacing:0;">※タップで詳細表示</span></div>
     ${cards}
     <div class="totbox">
       <h4>💴 5台 年間保険料合計</h4>
