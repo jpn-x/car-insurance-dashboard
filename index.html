@@ -20,6 +20,7 @@
   --sh: 0 2px 12px rgba(0,0,0,0.08);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
   background: var(--bg); color: var(--text);
@@ -177,6 +178,7 @@ body {
 .shaken-list-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid var(--bdr); gap: 8px; }
 .shaken-list-row:last-child { border-bottom: none; }
 .sl-name { font-size: 12.5px; font-weight: 700; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sl-name a { color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(0,0,0,0.25); }
 .sl-date { font-size: 12px; font-weight: 600; color: var(--sub); flex-shrink: 0; }
 .sl-days { font-size: 11px; font-weight: 700; flex-shrink: 0; padding: 2px 8px; border-radius: 20px; }
 .sl-days.urg { background: #fdecea; color: var(--urg); }
@@ -434,7 +436,7 @@ function renderAll() {
       const d = days(c.shakenExpiry);
       const cl = cc(d);
       return `<div class="shaken-list-row">
-        <span class="sl-name">${c.name}</span>
+        <span class="sl-name"><a href="#card-${c.id}" onclick="scrollToCard('${c.id}')">${c.name}</a></span>
         <span class="sl-date">${toReiwa(c.shakenExpiry)}</span>
         <span class="sl-days ${cl}">残${d}日</span>
       </div>`;
@@ -542,6 +544,13 @@ function renderCar(c) {
 // ================================================================
 // TAB
 // ================================================================
+function scrollToCard(id) {
+  setTimeout(() => {
+    const el = document.getElementById('card-' + id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 50);
+}
+
 function gt(id, el) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
