@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>車保険管理ダッシュボード</title>
+<style>
+:root {
+  --urg: #e74c3c;
+  --wrn: #e67e22;
+  --ok: #27ae60;
+  --unk: #95a5a6;
+  --bg: #f0f2f5;
+  --white: #fff;
+  --text: #1a1a2e;
+  --sub: #7f8c8d;
+  --bdr: #e8ecef;
+  --r: 14px;
+  --sh: 0 2px 12px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+  background: var(--bg); color: var(--text);
+  max-width: 430px; margin: 0 auto;
+}
+
+/* HEADER */
+.hdr {
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  color: #fff; padding: 14px 16px 0;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.4);
+}
+.hdr-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.hdr h1 { font-size: 15px; font-weight: 800; }
+.hdr .badge { font-size: 11px; background: rgba(255,255,255,0.15); border-radius: 20px; padding: 3px 10px; }
+.tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 0 0 auto; padding: 8px 13px 9px;
+  font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,0.4); cursor: pointer;
+  white-space: nowrap; border-bottom: 2px solid transparent;
+  transition: all 0.2s; user-select: none;
+}
+.tab.on { color: #fff; border-bottom-color: #5dade2; }
+
+/* PAGES */
+.page { display: none; padding: 12px; }
+.page.on { display: block; }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
+.sbox { background: var(--white); border-radius: 12px; padding: 10px 6px; text-align: center; box-shadow: var(--sh); }
+.sbox .n { font-size: 22px; font-weight: 900; line-height: 1; }
+.sbox .l { font-size: 10px; color: var(--sub); margin-top: 3px; }
+.n.cred { color: var(--urg); } .n.cblue { color: #2980b9; } .n.cpur { color: #7d3c98; }
+
+/* ALERT */
+.alert {
+  background: linear-gradient(135deg, #fff3e0,#ffe0b2);
+  border-left: 4px solid #ff9800; border-radius: 10px;
+  padding: 10px 12px; margin-bottom: 12px;
+  font-size: 12px; color: #4e342e; line-height: 1.5;
+}
+
+/* SEC LABEL */
+.slabel { font-size: 10px; font-weight: 700; color: var(--sub); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; padding-left: 2px; }
+
+/* CARD */
+.card {
+  background: var(--white); border-radius: var(--r); margin-bottom: 10px;
+  box-shadow: var(--sh); border-left: 5px solid var(--ok); overflow: hidden; cursor: pointer;
+  transition: transform 0.1s;
+}
+.card:active { transform: scale(0.99); }
+.card.urg { border-left-color: var(--urg); }
+.card.wrn { border-left-color: var(--wrn); }
+.card.saf { border-left-color: var(--ok); }
+.card.unk { border-left-color: var(--unk); }
+
+.ctop { display: flex; align-items: flex-start; justify-content: space-between; padding: 13px 14px 8px; }
+.cname { font-size: 17px; font-weight: 800; line-height: 1.2; }
+.csub { font-size: 11px; color: var(--sub); margin-top: 2px; }
+.chip {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px; margin-top: 5px;
+}
+.chip.zur { background: #e8f4fd; color: #1565c0; }
+.chip.axa { background: #fce4ec; color: #b71c1c; }
+
+.dblock { text-align: right; flex-shrink: 0; margin-left: 8px; }
+.dnum { font-size: 32px; font-weight: 900; line-height: 1; }
+.dnum.urg { color: var(--urg); } .dnum.wrn { color: var(--wrn); }
+.dnum.saf { color: var(--ok); } .dnum.unk { color: var(--unk); }
+.dunit { font-size: 10px; color: var(--sub); }
+.ddate { font-size: 12px; font-weight: 700; margin-top: 3px; }
+
+.prog { padding: 0 14px 6px; }
+.pbg { height: 3px; background: #ecf0f1; border-radius: 2px; overflow: hidden; }
+.pfill { height: 100%; border-radius: 2px; }
+.pfill.urg { background: var(--urg); } .pfill.wrn { background: var(--wrn); }
+.pfill.saf { background: var(--ok); } .pfill.unk { background: var(--unk); }
+
+.qrow { display: grid; grid-template-columns: repeat(3,1fr); padding: 6px 14px 10px; gap: 6px; }
+.qs { background: var(--bg); border-radius: 8px; padding: 7px 8px; }
+.qsl { font-size: 10px; color: var(--sub); }
+.qsv { font-size: 13px; font-weight: 800; margin-top: 2px; }
+.qsv.sm { font-size: 11px; }
+
+.exrow { display: flex; align-items: center; justify-content: center; padding: 2px 0 10px; color: var(--sub); font-size: 11px; gap: 4px; }
+.arr { transition: transform 0.25s; display: inline-block; }
+.card.open .arr { transform: rotate(180deg); }
+
+.cdetail { display: none; border-top: 1px solid var(--bdr); padding: 12px 14px 14px; }
+.card.open .cdetail { display: block; }
+
+.dr { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--bdr); font-size: 12.5px; gap: 8px; }
+.dr:last-child { border-bottom: none; }
+.dk { color: var(--sub); flex: 0 0 auto; }
+.dv { font-weight: 700; text-align: right; }
+.dv.empty { color: #bdc3c7; font-style: italic; font-weight: 400; font-size: 11px; }
+
+/* JIBAISEKI BADGE */
+.jb-section { margin-top: 10px; padding: 10px; background: #f8f4ff; border-radius: 8px; border-left: 3px solid #9b59b6; }
+.jb-title { font-size: 10px; font-weight: 700; color: #7d3c98; margin-bottom: 6px; letter-spacing: 0.5px; }
+.jb-row { display: flex; justify-content: space-between; font-size: 11.5px; padding: 3px 0; }
+.jb-k { color: var(--sub); }
+.jb-v { font-weight: 700; }
+.jb-v.exp-soon { color: var(--wrn); }
+
+.note-box { margin-top: 10px; padding: 9px 10px; background: #fff8e1; border-radius: 8px; border-left: 3px solid #ffc107; font-size: 11px; color: #5d4037; line-height: 1.5; }
+
+/* TOTALS */
+.totbox { background: var(--white); border-radius: var(--r); padding: 14px 16px; box-shadow: var(--sh); margin-top: 4px; }
+.totbox h4 { font-size: 11px; color: var(--sub); margin-bottom: 8px; }
+.tyen { font-size: 30px; font-weight: 900; }
+.tsub { font-size: 11px; color: var(--sub); margin-top: 2px; }
+
+/* INDIVIDUAL */
+.hero {
+  background: linear-gradient(135deg, #0f0c29, #302b63);
+  color: white; border-radius: var(--r); padding: 16px; margin-bottom: 12px; box-shadow: var(--sh);
+}
+.hname { font-size: 20px; font-weight: 900; }
+.hsub { font-size: 12px; opacity: 0.7; margin-top: 3px; }
+.hdays { font-size: 48px; font-weight: 900; margin: 10px 0 0; line-height: 1; }
+.hdays.urg { color: #ff6b6b; } .hdays.wrn { color: #ffd166; }
+.hdays.saf { color: #06d6a0; } .hdays.unk { color: rgba(255,255,255,0.5); }
+.hdt { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+
+.iblock { background: var(--white); border-radius: var(--r); box-shadow: var(--sh); margin-bottom: 10px; overflow: hidden; }
+.ibhdr { background: var(--bg); padding: 9px 14px; font-size: 11px; font-weight: 700; color: var(--sub); letter-spacing: 0.5px; text-transform: uppercase; border-bottom: 1px solid var(--bdr); }
+.irow { display: flex; justify-content: space-between; padding: 9px 14px; border-bottom: 1px solid var(--bdr); font-size: 13px; gap: 8px; }
+.irow:last-child { border-bottom: none; }
+.ik { color: var(--sub); flex: 0 0 auto; }
+.iv { font-weight: 700; text-align: right; word-break: break-all; }
+.iv.empty { color: #bdc3c7; font-style: italic; font-weight: 400; font-size: 11px; }
+.iv.curg { color: var(--urg); font-weight: 900; }
+.iv.cwrn { color: var(--wrn); font-weight: 900; }
+.iv.csaf { color: var(--ok); font-weight: 900; }
+
+.footer { text-align: center; font-size: 10px; color: var(--sub); padding: 18px 0 30px; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <h1>🚗 車保険ダッシュボード</h1>
+    <span class="badge">村上 直樹 / 5台</span>
+  </div>
+  <div class="tabs" id="mainTabs">
+    <div class="tab on"  onclick="gt('all',this)">📋 全台一覧</div>
+    <div class="tab"     onclick="gt('c0',this)">プリウス①</div>
+    <div class="tab"     onclick="gt('c1',this)">スズキ</div>
+    <div class="tab"     onclick="gt('c2',this)">タント</div>
+    <div class="tab"     onclick="gt('c3',this)">プリウス②</div>
+    <div class="tab"     onclick="gt('c4',this)">レクサス IS</div>
+  </div>
+</div>
+
+<div id="pg-all" class="page on"></div>
+<div id="pg-c0"  class="page"></div>
+<div id="pg-c1"  class="page"></div>
+<div id="pg-c2"  class="page"></div>
+<div id="pg-c3"  class="page"></div>
+<div id="pg-c4"  class="page"></div>
+
+<script>
+// ================================================================
+// DATA
+// 更新するときはここの値を書き換えるだけ！
+// ================================================================
+const TODAY = new Date('2026-04-23');
+
+const CARS = [
+  {
+    id:'c0', label:'プリウス①',
+    name:'プリウス ①', maker:'トヨタ', model:'ZVW40 / 1800 アルファ S',
+    use:'自家用普通乗用車', firstReg:'平成24年11月',
+    insurer:'チューリッヒ', chipCls:'zur',
+    policyNo:'10911810', renewalDate:'2026-06-05',
+    grade:'20等級', premium:45100,
+    ageLimit:'全年齢担保', lifeIns:'5,000万円（搭乗中のみ）',
+    collision:'あり（免責あり）', roadside:'あり', selfPay:'免責特約あり',
+    plate:'なにわ 344 む 225', chassisNo:'ZVW40-3048566',
+    jibaInsurer:'損保ジャパン', jibaCertNo:'第61KGL1254号',
+    jibaPlate:'なにわ 344 む 225', jibaExpiry:'2027-11-29', jibaPremium:'¥17,650',
+    note:'⚠ チューリッヒサイトで自動継続の状況を必ず確認してください（次回継続済の場合は2027/6/5が期限）。'
+  },
+  {
+    id:'c1', label:'スズキ',
+    name:'スズキ DC51T', maker:'スズキ', model:'DC51T（軽貨物）',
+    use:'自家用軽四輪貨物', firstReg:'平成8年12月',
+    insurer:'チューリッヒ', chipCls:'zur',
+    policyNo:'11017944', renewalDate:'2026-10-09',
+    grade:'6等級', premium:17360,
+    ageLimit:'なし（制限なし）', lifeIns:'なし',
+    collision:'なし', roadside:'なし', selfPay:'なし',
+    plate:'なにわ 480 な 9427', chassisNo:'DC51T-113803',
+    jibaInsurer:'損保ジャパン', jibaCertNo:'第61H8K9269号',
+    jibaPlate:'なにわ 480 な 9427', jibaExpiry:'2026-11-07', jibaPremium:'¥18,040',
+    note:'⚠ 自賠責保険が2026年11月7日に期限切れ！任意保険更新(10/9)とほぼ同時期に両方の更新が必要です。'
+  },
+  {
+    id:'c2', label:'タント',
+    name:'タント', maker:'ダイハツ', model:'L375S',
+    use:'自家用軽四輪乗用車', firstReg:'平成21年3月',
+    insurer:'チューリッヒ', chipCls:'zur',
+    policyNo:'15031741', renewalDate:'2026-10-26',
+    grade:'8等級', premium:18720,
+    ageLimit:'なし（制限なし）', lifeIns:'3,000万円（搭乗中のみ）',
+    collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）',
+    plate:'なにわ 584 と 225', chassisNo:'L37S0-0293759',
+    jibaInsurer:'', jibaCertNo:'', jibaPlate:'', jibaExpiry:null, jibaPremium:'',
+    note:'📋 自賠責保険の証明書を後日追加予定。証明書を確認して期限を入力してください。'
+  },
+  {
+    id:'c3', label:'プリウス②',
+    name:'プリウス ②', maker:'トヨタ', model:'ZVW30 / 1800 G',
+    use:'自家用普通乗用車', firstReg:'平成22年8月',
+    insurer:'チューリッヒ', chipCls:'zur',
+    policyNo:'11358107', renewalDate:'2026-12-25',
+    grade:'11等級', premium:36740,
+    ageLimit:'ゴールド免許割引', lifeIns:'3,000万円（搭乗中のみ）',
+    collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）',
+    plate:'愛媛 339 み 211', chassisNo:'ZVW30-0219070',
+    jibaInsurer:'損保ジャパン', jibaCertNo:'第61K8S8573号',
+    jibaPlate:'愛媛 339 み 211', jibaExpiry:'2027-09-19', jibaPremium:'¥17,650',
+    note:''
+  },
+  {
+    id:'c4', label:'レクサス IS',
+    name:'レクサス IS', maker:'レクサス', model:'GSE20 / IS 350',
+    use:'自家用普通乗用車', firstReg:'平成18年11月',
+    insurer:'アクサダイレクト', chipCls:'axa',
+    policyNo:'459956932', renewalDate:'2027-03-25',
+    grade:'7S等級', premium:47450,
+    ageLimit:'21歳以上補償', lifeIns:'5,000万円（搭乗中のみ）',
+    collision:'なし', roadside:'AXAプレミアムロードサービス', selfPay:'—',
+    plate:'なにわ 34L は 1001', chassisNo:'GSE20-2032382',
+    jibaInsurer:'損保ジャパン', jibaCertNo:'第61K248274号',
+    jibaPlate:'なにわ 34L は 1001', jibaExpiry:'2027-08-10', jibaPremium:'¥17,650',
+    note:'払込方法: 一括払い。特約: 他車運転危険補償・複数所有新規割引など。'
+  }
+];
+
+// ================================================================
+// UTILS
+// ================================================================
+function days(ds) {
+  if (!ds) return null;
+  return Math.ceil((new Date(ds) - TODAY) / 86400000);
+}
+function cc(d) {
+  if (d === null) return 'unk';
+  if (d <= 30) return 'urg';
+  if (d <= 90) return 'wrn';
+  return 'saf';
+}
+function fd(ds) {
+  if (!ds) return '要確認';
+  const d = new Date(ds);
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+function pct(d) {
+  if (d === null) return 50;
+  return Math.max(3, Math.min(100, 100-(d/365*100)));
+}
+function dv(v) {
+  if (!v||v==='要確認') return `<span class="dv empty">未入力・要確認</span>`;
+  return `<span class="dv">${v}</span>`;
+}
+function iv(v,cls) {
+  if (!v||v==='要確認') return `<span class="iv empty">未入力・要確認</span>`;
+  return `<span class="iv ${cls||''}">${v}</span>`;
+}
+
+// ================================================================
+// ALL PAGE
+// ================================================================
+function renderAll() {
+  const sorted = [...CARS].sort((a,b) => {
+    if (!a.renewalDate&&!b.renewalDate) return 0;
+    if (!a.renewalDate) return 1; if (!b.renewalDate) return -1;
+    return new Date(a.renewalDate)-new Date(b.renewalDate);
+  });
+
+  let total=0, urgCnt=0;
+  sorted.forEach(c => {
+    const d=days(c.renewalDate);
+    if (d!==null&&d<=90) urgCnt++;
+    if (c.premium) total+=c.premium;
+  });
+
+  const nr = sorted.find(c=>c.renewalDate);
+  const nd = nr ? days(nr.renewalDate) : null;
+  let alertHtml='';
+  if (nd!==null&&nd<=60) {
+    alertHtml=`<div class="alert">⚡ <strong>${nr.name}</strong>の更新まであと <strong>${nd}日</strong>！<br>更新期限: ${fd(nr.renewalDate)}</div>`;
+  }
+
+  // Also check for jibaiseki expiry
+  const jibaAlerts = sorted.filter(c => {
+    const jd = days(c.jibaExpiry);
+    return jd !== null && jd <= 200;
+  });
+
+  let jibaAlertHtml = '';
+  jibaAlerts.forEach(c => {
+    const jd = days(c.jibaExpiry);
+    jibaAlertHtml += `<div class="alert" style="border-color:#9b59b6; background: linear-gradient(135deg,#f3e5f5,#e1bee7)">
+      📌 <strong>${c.name}</strong>の<strong>自賠責保険</strong>があと${jd}日で期限切れ！<br>
+      自賠責期限: ${fd(c.jibaExpiry)} （${c.jibaCertNo}）
+    </div>`;
+  });
+
+  let cards = '';
+  sorted.forEach(c => {
+    const d=days(c.renewalDate), cls=cc(d), p=pct(d);
+    const jd = days(c.jibaExpiry);
+    const jcls = jd !== null && jd <= 200 ? 'exp-soon' : '';
+
+    cards += `
+    <div class="card ${cls}" id="card-${c.id}" onclick="tc('${c.id}')">
+      <div class="ctop">
+        <div>
+          <div class="cname">${c.name}</div>
+          <div class="csub">${c.maker} / ${c.model}</div>
+          <span class="chip ${c.chipCls}">${c.insurer}</span>
+        </div>
+        <div class="dblock">
+          <div class="dnum ${cls}">${d!==null?d:'?'}</div>
+          <div class="dunit">日後に更新</div>
+          <div class="ddate">${fd(c.renewalDate)}</div>
+        </div>
+      </div>
+      <div class="prog"><div class="pbg"><div class="pfill ${cls}" style="width:${p}%"></div></div></div>
+      <div class="qrow">
+        <div class="qs"><div class="qsl">等級</div><div class="qsv">${c.grade}</div></div>
+        <div class="qs"><div class="qsl">年間保険料</div><div class="qsv sm">${c.premium?'¥'+c.premium.toLocaleString():'要確認'}</div></div>
+        <div class="qs"><div class="qsl">年齢条件</div><div class="qsv sm">${c.ageLimit}</div></div>
+      </div>
+      <div class="exrow"><span>詳細</span><span class="arr">▼</span></div>
+      <div class="cdetail">
+        <div class="dr"><span class="dk">証券番号</span>${dv(c.policyNo)}</div>
+        <div class="dr"><span class="dk">用途</span>${dv(c.use)}</div>
+        <div class="dr"><span class="dk">初年度登録</span>${dv(c.firstReg)}</div>
+        <div class="dr"><span class="dk">ナンバー</span>${dv(c.plate)}</div>
+        <div class="dr"><span class="dk">車台番号</span>${dv(c.chassisNo)}</div>
+        <div class="dr"><span class="dk">人身傷害</span>${dv(c.lifeIns)}</div>
+        <div class="dr"><span class="dk">車両保険</span>${dv(c.collision)}</div>
+        <div class="dr"><span class="dk">ロードサービス</span>${dv(c.roadside)}</div>
+        <div class="jb-section">
+          <div class="jb-title">📌 自賠責保険</div>
+          ${c.jibaExpiry
+            ? `<div class="jb-row"><span class="jb-k">期限</span><span class="jb-v ${jcls}">${fd(c.jibaExpiry)}</span></div>
+               <div class="jb-row"><span class="jb-k">証明書番号</span><span class="jb-v">${c.jibaCertNo}</span></div>
+               <div class="jb-row"><span class="jb-k">保険料</span><span class="jb-v">${c.jibaPremium}</span></div>`
+            : `<div class="jb-row"><span class="jb-k" style="color:#bf9000">後日追加予定</span></div>`}
+        </div>
+        ${c.note?`<div class="note-box">${c.note}</div>`:''}
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('pg-all').innerHTML = `
+    <div class="stats">
+      <div class="sbox"><div class="n cblue">5</div><div class="l">台契約中</div></div>
+      <div class="sbox"><div class="n cred">${urgCnt}</div><div class="l">90日以内更新</div></div>
+      <div class="sbox"><div class="n cpur" style="font-size:15px">¥${(total/10000).toFixed(1)}万</div><div class="l">年間合計</div></div>
+    </div>
+    ${alertHtml}${jibaAlertHtml}
+    <div class="slabel">更新期限順（任意保険）</div>
+    ${cards}
+    <div class="totbox">
+      <h4>💴 5台 年間保険料合計</h4>
+      <div class="tyen">¥${total.toLocaleString()}</div>
+      <div class="tsub">/ 年間（任意保険5台分）</div>
+      <div style="font-size:11px;color:#aaa;margin-top:6px;">自賠責は別途：各車¥17,650〜¥18,040</div>
+    </div>
+    <div class="footer">
+      最終更新: 2026年4月23日<br>
+      データ更新 → index.html の CARS 配列を編集<br>
+      ©村上 直樹
+    </div>`;
+}
+
+function tc(id) {
+  const el=document.getElementById('card-'+id);
+  if(el) el.classList.toggle('open');
+}
+
+// ================================================================
+// INDIVIDUAL PAGES
+// ================================================================
+function renderCar(c) {
+  const d=days(c.renewalDate), cls=cc(d);
+  const jd=days(c.jibaExpiry), jcls=cc(jd);
+
+  document.getElementById('pg-'+c.id).innerHTML = `
+    <div class="hero">
+      <div class="hname">${c.name}</div>
+      <div class="hsub">${c.maker} | ${c.insurer}</div>
+      <div class="hdays ${cls}">${d!==null?d:'?'}</div>
+      <div class="hdt">${d!==null?'日後に更新 — ':''}${fd(c.renewalDate)}</div>
+    </div>
+
+    <div class="iblock">
+      <div class="ibhdr">📋 契約情報（任意保険）</div>
+      <div class="irow"><span class="ik">保険会社</span>${iv(c.insurer)}</div>
+      <div class="irow"><span class="ik">証券番号</span>${iv(c.policyNo)}</div>
+      <div class="irow"><span class="ik">更新期限</span><span class="iv c${cls}">${fd(c.renewalDate)}</span></div>
+      <div class="irow"><span class="ik">ノンフリート等級</span>${iv(c.grade)}</div>
+      <div class="irow"><span class="ik">年間保険料</span><span class="iv">${c.premium?'¥'+c.premium.toLocaleString():'<span class="iv empty">要確認</span>'}</span></div>
+      <div class="irow"><span class="ik">年齢条件</span>${iv(c.ageLimit)}</div>
+    </div>
+
+    <div class="iblock">
+      <div class="ibhdr">🛡️ 補償内容</div>
+      <div class="irow"><span class="ik">人身傷害保険</span>${iv(c.lifeIns)}</div>
+      <div class="irow"><span class="ik">車両保険</span>${iv(c.collision)}</div>
+      <div class="irow"><span class="ik">ロードサービス</span>${iv(c.roadside)}</div>
+      <div class="irow"><span class="ik">自己負担額</span>${iv(c.selfPay)}</div>
+    </div>
+
+    <div class="iblock">
+      <div class="ibhdr">🚗 車両情報</div>
+      <div class="irow"><span class="ik">メーカー / 車名</span>${iv(c.maker+' '+c.name)}</div>
+      <div class="irow"><span class="ik">型式</span>${iv(c.model)}</div>
+      <div class="irow"><span class="ik">用途</span>${iv(c.use)}</div>
+      <div class="irow"><span class="ik">初年度登録</span>${iv(c.firstReg)}</div>
+      <div class="irow"><span class="ik">ナンバープレート</span>${iv(c.plate)}</div>
+      <div class="irow"><span class="ik">車台番号</span>${iv(c.chassisNo)}</div>
+    </div>
+
+    <div class="iblock">
+      <div class="ibhdr" style="color:#7d3c98">📌 自賠責保険</div>
+      ${c.jibaExpiry ? `
+      <div class="irow"><span class="ik">保険会社</span>${iv(c.jibaInsurer)}</div>
+      <div class="irow"><span class="ik">証明書番号</span>${iv(c.jibaCertNo)}</div>
+      <div class="irow"><span class="ik">登録番号</span>${iv(c.jibaPlate)}</div>
+      <div class="irow"><span class="ik">有効期限</span><span class="iv c${jcls}">${fd(c.jibaExpiry)}</span></div>
+      <div class="irow"><span class="ik">保険料</span>${iv(c.jibaPremium)}</div>
+      ` : `
+      <div class="irow"><span class="ik" style="color:#bf9000">⚠ 後日追加予定</span><span class="iv empty">証明書を確認して記入</span></div>
+      `}
+    </div>
+
+    ${c.note?`<div class="note-box" style="margin-bottom:10px">${c.note}</div>`:''}
+
+    <div class="footer">データ更新 → index.html の CARS 配列</div>`;
+}
+
+// ================================================================
+// TAB
+// ================================================================
+function gt(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  if(el) el.classList.add('on');
+  window.scrollTo(0,0);
+}
+
+// ================================================================
+// INIT
+// ================================================================
+renderAll();
+CARS.forEach(c=>renderCar(c));
+</script>
+</body>
+</html>
