@@ -103,7 +103,8 @@ body {
 .dnum.urg { color: var(--urg); } .dnum.wrn { color: var(--wrn); }
 .dnum.saf { color: var(--ok); } .dnum.unk { color: var(--unk); }
 .dunit { font-size: 10px; color: var(--sub); }
-.ddate { font-size: 12px; font-weight: 700; margin-top: 3px; }
+.ddate { font-size: 11px; font-weight: 700; margin-top: 3px; line-height: 1.5; }
+.ddate-label { font-size: 9px; font-weight: 400; color: var(--sub); display: block; }
 
 .prog { padding: 0 14px 6px; }
 .pbg { height: 3px; background: #ecf0f1; border-radius: 2px; overflow: hidden; }
@@ -392,7 +393,7 @@ function renderAll() {
         <div class="dblock">
           <div class="dnum ${cls}">${d!==null?d:'?'}</div>
           <div class="dunit">日後に更新</div>
-          <div class="ddate">${fd(c.renewalDate)}</div>
+          <div class="ddate"><span class="ddate-label">任意保険有効期限</span>${fd(c.renewalDate)}</div>
         </div>
       </div>
       <div class="prog"><div class="pbg"><div class="pfill ${cls}" style="width:${p}%"></div></div></div>
