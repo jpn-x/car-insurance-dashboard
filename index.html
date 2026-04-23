@@ -163,6 +163,9 @@ body {
 .iv.csaf { color: var(--ok); font-weight: 900; }
 
 .footer { text-align: center; font-size: 10px; color: var(--sub); padding: 18px 0 30px; line-height: 1.8; }
+.shaken-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.shaken-tag { display: inline-flex; align-items: center; gap: 3px; background: rgba(0,0,0,0.04); border: 1px solid var(--bdr); border-radius: 6px; padding: 2px 7px; font-size: 10.5px; color: var(--sub); white-space: nowrap; }
+.shaken-tag.exp-near { border-color: #f39c12; color: #e67e22; background: #fff8ee; }
 </style>
 </head>
 <body>
@@ -206,6 +209,7 @@ const CARS = [
     grade:'20等級', premium:45100,
     ageLimit:'全年齢担保', lifeIns:'5,000万円（搭乗中のみ）',
     collision:'あり（免責あり）', roadside:'あり', selfPay:'免責特約あり', lawyerSpec:'あり',
+    shakenExpiry:'2027-11-28', autoTax:39500,
     plate:'なにわ 344 む 225', chassisNo:'ZVW40-3048566',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61KGL1254号',
     jibaPlate:'なにわ 344 む 225', jibaExpiry:'2027-11-29', jibaPremium:'¥17,650',
@@ -220,6 +224,7 @@ const CARS = [
     grade:'6等級', premium:17360,
     ageLimit:'30歳以上', lifeIns:'なし',
     collision:'なし', roadside:'なし', selfPay:'なし', lawyerSpec:'なし',
+    shakenExpiry:'2026-10-07', autoTax:6000,
     plate:'なにわ 480 な 9427', chassisNo:'DC51T-113803',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61H8K9269号',
     jibaPlate:'なにわ 480 な 9427', jibaExpiry:'2026-11-07', jibaPremium:'¥18,040',
@@ -234,6 +239,7 @@ const CARS = [
     grade:'8等級', premium:18720,
     ageLimit:'30歳以上', lifeIns:'3,000万円（搭乗中のみ）',
     collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）', lawyerSpec:'なし',
+    shakenExpiry:'2027-05-07', autoTax:10800,
     plate:'なにわ 584 よ 225', chassisNo:'L375S-0289759',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61KOW1202号',
     jibaPlate:'なにわ 584 よ 225', jibaExpiry:'2027-05-31', jibaPremium:'¥18,040',
@@ -248,6 +254,7 @@ const CARS = [
     grade:'11等級', premium:36740,
     ageLimit:'30歳以上', lifeIns:'3,000万円（搭乗中のみ）',
     collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）', lawyerSpec:'なし',
+    shakenExpiry:'2027-04-06', autoTax:39500,
     plate:'愛媛 339 み 211', chassisNo:'ZVW30-0219070',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61K8S8573号',
     jibaPlate:'愛媛 339 み 211', jibaExpiry:'2027-09-19', jibaPremium:'¥17,650',
@@ -262,6 +269,7 @@ const CARS = [
     grade:'6S等級', premium:64140,
     ageLimit:'21歳以上補償', lifeIns:'5,000万円（搭乗中のみ）',
     collision:'なし', roadside:'AXAプレミアムロードサービス', selfPay:'—', lawyerSpec:'なし',
+    shakenExpiry:'2027-07-09', autoTax:45000,
     plate:'なにわ 384 つ 777', chassisNo:'GSE20-2032382',
     accidentInfo:{count:'1件', type:'3等級ダウン事故', coeffYears:'3年'},
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61K248274号',
@@ -291,6 +299,11 @@ function fd(ds) {
 function pct(d) {
   if (d === null) return 50;
   return Math.max(3, Math.min(100, 100-(d/365*100)));
+}
+function toReiwa(ds) {
+  if (!ds) return '要確認';
+  const d = new Date(ds);
+  return `令和${d.getFullYear()-2018}年${d.getMonth()+1}月${d.getDate()}日`;
 }
 function dv(v) {
   if (!v||v==='要確認') return `<span class="dv empty">未入力・要確認</span>`;
@@ -353,6 +366,10 @@ function renderAll() {
           <div class="cname">${c.name}</div>
           <div class="csub">${c.maker} / ${c.model}</div>
           <span class="chip ${c.chipCls}">${c.insurer}</span>
+          <div class="shaken-row">
+            <span class="shaken-tag ${days(c.shakenExpiry)!==null&&days(c.shakenExpiry)<=180?'exp-near':''}">🔧 車検 ${toReiwa(c.shakenExpiry)}</span>
+            <span class="shaken-tag">💴 自動車税 ¥${c.autoTax?c.autoTax.toLocaleString():'—'}/年</span>
+          </div>
         </div>
         <div class="dblock">
           <div class="dnum ${cls}">${d!==null?d:'?'}</div>
@@ -465,6 +482,8 @@ function renderCar(c) {
       <div class="irow"><span class="ik">型式</span>${iv(c.model)}</div>
       <div class="irow"><span class="ik">用途</span>${iv(c.use)}</div>
       <div class="irow"><span class="ik">初年度登録</span>${iv(c.firstReg)}</div>
+      <div class="irow"><span class="ik">車検期限</span><span class="iv">${toReiwa(c.shakenExpiry)}</span></div>
+      <div class="irow"><span class="ik">年間自動車税</span><span class="iv">¥${c.autoTax?c.autoTax.toLocaleString():'—'}</span></div>
       <div class="irow"><span class="ik">ナンバープレート</span>${iv(c.plate)}</div>
       <div class="irow"><span class="ik">車台番号</span>${iv(c.chassisNo)}</div>
     </div>
