@@ -97,6 +97,8 @@ body {
 }
 .chip.zur { background: #e8f4fd; color: #1565c0; }
 .chip.axa { background: #fce4ec; color: #b71c1c; }
+.chip.law-on  { background: #e8f5e9; color: #2e7d32; }
+.chip.law-off { background: #f5f5f5; color: #9e9e9e; }
 
 .dblock { text-align: right; flex-shrink: 0; margin-left: 8px; }
 .dnum { font-size: 32px; font-weight: 900; line-height: 1; }
@@ -226,8 +228,8 @@ const CARS = [
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'10911810', renewalDate:'2026-06-08',
     grade:'20等級', premium:45180,
-    ageLimit:'全年齢担保', lifeIns:'5,000万円（搭乗中のみ）',
-    collision:'あり（免責あり）', roadside:'あり', selfPay:'免責特約あり', lawyerSpec:'あり',
+    ageLimit:'全年齢担保補償', lifeIns:'5,000万円（搭乗中のみ）',
+    collision:'なし', roadside:'あり', selfPay:'免責特約あり', lawyerSpec:'あり',
     shakenExpiry:'2027-11-28', autoTax:39500,
     plate:'なにわ 344 む 225', chassisNo:'ZVW40-3048566',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61KGL1254号',
@@ -241,7 +243,7 @@ const CARS = [
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'11017944', renewalDate:'2026-10-09',
     grade:'6等級', premium:17360,
-    ageLimit:'30歳以上', lifeIns:'なし',
+    ageLimit:'30歳以上補償', lifeIns:'なし',
     collision:'なし', roadside:'なし', selfPay:'なし', lawyerSpec:'なし',
     shakenExpiry:'2026-10-07', autoTax:6000,
     plate:'なにわ 480 な 9427', chassisNo:'DC51T-113803',
@@ -256,8 +258,8 @@ const CARS = [
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'15031741', renewalDate:'2026-10-26',
     grade:'8等級', premium:18720,
-    ageLimit:'30歳以上', lifeIns:'3,000万円（搭乗中のみ）',
-    collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）', lawyerSpec:'なし',
+    ageLimit:'30歳以上補償', lifeIns:'3,000万円（搭乗中のみ）',
+    collision:'なし', roadside:'あり', selfPay:'自己負担あり（1回目）', lawyerSpec:'なし',
     shakenExpiry:'2027-05-07', autoTax:10800,
     plate:'なにわ 584 よ 225', chassisNo:'L375S-0289759',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61KOW1202号',
@@ -271,8 +273,8 @@ const CARS = [
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'11358107', renewalDate:'2026-12-25',
     grade:'11等級', premium:36740,
-    ageLimit:'30歳以上', lifeIns:'3,000万円（搭乗中のみ）',
-    collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）', lawyerSpec:'なし',
+    ageLimit:'30歳以上補償', lifeIns:'3,000万円（搭乗中のみ）',
+    collision:'なし', roadside:'あり', selfPay:'自己負担あり（1回目）', lawyerSpec:'なし',
     shakenExpiry:'2027-04-06', autoTax:39500,
     plate:'愛媛 339 み 211', chassisNo:'ZVW30-0219070',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61K8S8573号',
@@ -384,7 +386,7 @@ function renderAll() {
         <div>
           <div class="cname">${c.name}</div>
           <div class="csub">${c.maker} / ${c.model}</div>
-          <span class="chip ${c.chipCls}">${c.insurer}</span>
+          <span class="chip ${c.chipCls}">${c.insurer}</span><span class="chip law-${c.lawyerSpec==='あり'?'on':'off'}">弁護士特約${c.lawyerSpec}</span>
           <div class="shaken-row">
             <span class="shaken-tag ${days(c.shakenExpiry)!==null&&days(c.shakenExpiry)<=180?'exp-near':''}">🔧 車検 ${toReiwa(c.shakenExpiry)}</span>
             <span class="shaken-tag">💴 自動車税 ¥${c.autoTax?c.autoTax.toLocaleString():'—'}/年</span>
