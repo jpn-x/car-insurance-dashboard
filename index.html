@@ -205,7 +205,7 @@ const CARS = [
     policyNo:'10911810', renewalDate:'2026-06-08',
     grade:'20等級', premium:45100,
     ageLimit:'全年齢担保', lifeIns:'5,000万円（搭乗中のみ）',
-    collision:'あり（免責あり）', roadside:'あり', selfPay:'免責特約あり',
+    collision:'あり（免責あり）', roadside:'あり', selfPay:'免責特約あり', lawyerSpec:'あり',
     plate:'なにわ 344 む 225', chassisNo:'ZVW40-3048566',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61KGL1254号',
     jibaPlate:'なにわ 344 む 225', jibaExpiry:'2027-11-29', jibaPremium:'¥17,650',
@@ -219,7 +219,7 @@ const CARS = [
     policyNo:'11017944', renewalDate:'2026-10-09',
     grade:'6等級', premium:17360,
     ageLimit:'30歳以上', lifeIns:'なし',
-    collision:'なし', roadside:'なし', selfPay:'なし',
+    collision:'なし', roadside:'なし', selfPay:'なし', lawyerSpec:'なし',
     plate:'なにわ 480 な 9427', chassisNo:'DC51T-113803',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61H8K9269号',
     jibaPlate:'なにわ 480 な 9427', jibaExpiry:'2026-11-07', jibaPremium:'¥18,040',
@@ -233,7 +233,7 @@ const CARS = [
     policyNo:'15031741', renewalDate:'2026-10-26',
     grade:'8等級', premium:18720,
     ageLimit:'30歳以上', lifeIns:'3,000万円（搭乗中のみ）',
-    collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）',
+    collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）', lawyerSpec:'なし',
     plate:'なにわ 584 よ 225', chassisNo:'L375S-0289759',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61KOW1202号',
     jibaPlate:'なにわ 584 よ 225', jibaExpiry:'2027-05-31', jibaPremium:'¥18,040',
@@ -247,7 +247,7 @@ const CARS = [
     policyNo:'11358107', renewalDate:'2026-12-25',
     grade:'11等級', premium:36740,
     ageLimit:'30歳以上', lifeIns:'3,000万円（搭乗中のみ）',
-    collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）',
+    collision:'あり（免責あり）', roadside:'あり', selfPay:'自己負担あり（1回目）', lawyerSpec:'なし',
     plate:'愛媛 339 み 211', chassisNo:'ZVW30-0219070',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61K8S8573号',
     jibaPlate:'愛媛 339 み 211', jibaExpiry:'2027-09-19', jibaPremium:'¥17,650',
@@ -261,7 +261,7 @@ const CARS = [
     policyNo:'459956932', renewalDate:'2027-03-25',
     grade:'6S等級', premium:64140,
     ageLimit:'21歳以上補償', lifeIns:'5,000万円（搭乗中のみ）',
-    collision:'なし', roadside:'AXAプレミアムロードサービス', selfPay:'—',
+    collision:'なし', roadside:'AXAプレミアムロードサービス', selfPay:'—', lawyerSpec:'なし',
     plate:'なにわ 384 つ 777', chassisNo:'GSE20-2032382',
     accidentInfo:{count:'1件', type:'3等級ダウン事故', coeffYears:'3年'},
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61K248274号',
@@ -376,6 +376,7 @@ function renderAll() {
         <div class="dr"><span class="dk">人身傷害</span>${dv(c.lifeIns)}</div>
         <div class="dr"><span class="dk">車両保険</span>${dv(c.collision)}</div>
         <div class="dr"><span class="dk">ロードサービス</span>${dv(c.roadside)}</div>
+        <div class="dr"><span class="dk">弁護士特約</span><span class="dv" style="${c.lawyerSpec==='あり'?'color:#27ae60;':'color:#7f8c8d;'}">${c.lawyerSpec||'要確認'}</span></div>
         ${c.accidentInfo ? `<div class="dr" style="background:#fff5f5;margin:4px -14px;padding:6px 14px;border-left:3px solid #e74c3c;">
           <span class="dk">⚠ 事故履歴</span>
           <span class="dv" style="color:#e74c3c;font-size:12px;line-height:1.6;">${c.accidentInfo.type} ${c.accidentInfo.count}${c.accidentInfo.coeffYears?`<br><span style="font-size:10px;font-weight:400;color:#c0392b;">事故有係数適用期間: ${c.accidentInfo.coeffYears}</span>`:''}</span>
@@ -455,6 +456,7 @@ function renderCar(c) {
       <div class="irow"><span class="ik">車両保険</span>${iv(c.collision)}</div>
       <div class="irow"><span class="ik">ロードサービス</span>${iv(c.roadside)}</div>
       <div class="irow"><span class="ik">自己負担額</span>${iv(c.selfPay)}</div>
+      <div class="irow"><span class="ik">弁護士特約</span><span class="iv" style="${c.lawyerSpec==='あり'?'color:#27ae60;font-weight:800;':'color:#7f8c8d;'}">${c.lawyerSpec||'要確認'}</span></div>
     </div>
 
     <div class="iblock">
