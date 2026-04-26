@@ -228,10 +228,11 @@ const CARS = [
     use:'自家用普通乗用車', firstReg:'平成24年11月',
     insurer:'SBI損保', chipCls:'sbi',
     prevInsurer:'チューリッヒ（〜6/8まで）',
-    policyNo:'10911810', renewalDate:'2027-06-08',
-    grade:'20等級', premium:59350,
-    ageLimit:'全年齢担保補償', lifeIns:'5,000万円（搭乗中のみ）',
-    collision:'なし', roadside:'あり', selfPay:'免責特約あり', lawyerSpec:'あり',
+    emergencyTel:'0800-2222-581',
+    policyNo:'0281-4754-9541', renewalDate:'2027-06-08',
+    grade:'20等級（事故有係数0年）', premium:59350,
+    ageLimit:'年齢を問わず補償', lifeIns:'5,000万円 / 搭乗者傷害2,000万円',
+    collision:'なし', roadside:'あり', selfPay:'対物自己負担: 0円', lawyerSpec:'あり',
     shakenExpiry:'2027-11-28', autoTax:39500,
     plate:'なにわ 344 む 225', chassisNo:'ZVW40-3048566',
     jibaInsurer:'損保ジャパン', jibaCertNo:'第61KGL1254号',
@@ -245,6 +246,7 @@ const CARS = [
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'11017944', renewalDate:'2026-10-09',
     grade:'6等級', premium:17360,
+    emergencyTel:'0120-197-222',
     ageLimit:'30歳以上補償', lifeIns:'なし',
     collision:'なし', roadside:'なし', selfPay:'なし', lawyerSpec:'なし',
     shakenExpiry:'2026-10-07', autoTax:6000,
@@ -260,6 +262,7 @@ const CARS = [
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'15031741', renewalDate:'2026-10-26',
     grade:'8等級', premium:18720,
+    emergencyTel:'0120-197-222',
     ageLimit:'30歳以上補償', lifeIns:'3,000万円（搭乗中のみ）',
     collision:'なし', roadside:'あり', selfPay:'自己負担あり（1回目）', lawyerSpec:'なし',
     shakenExpiry:'2027-05-07', autoTax:10800,
@@ -275,6 +278,7 @@ const CARS = [
     insurer:'チューリッヒ', chipCls:'zur',
     policyNo:'11358107', renewalDate:'2026-12-25',
     grade:'11等級', premium:36740,
+    emergencyTel:'0120-197-222',
     ageLimit:'30歳以上補償', lifeIns:'3,000万円（搭乗中のみ）',
     collision:'なし', roadside:'あり', selfPay:'自己負担あり（1回目）', lawyerSpec:'なし',
     shakenExpiry:'2027-04-06', autoTax:39500,
@@ -290,6 +294,7 @@ const CARS = [
     insurer:'アクサダイレクト', chipCls:'axa',
     policyNo:'459956932', renewalDate:'2027-03-25',
     grade:'6S等級', premium:64140,
+    emergencyTel:'0120-699-644',
     ageLimit:'21歳以上補償', lifeIns:'5,000万円（搭乗中のみ）',
     collision:'なし', roadside:'AXAプレミアムロードサービス', selfPay:'—', lawyerSpec:'なし',
     shakenExpiry:'2027-07-09', autoTax:45000,
@@ -388,7 +393,9 @@ function renderAll() {
         <div>
           <div class="cname">${c.name}</div>
           <div class="csub">${c.maker} / ${c.model}</div>
-          <span class="chip ${c.chipCls}">${c.insurer}</span><span class="chip law-${c.lawyerSpec==='あり'?'on':'off'}">弁護士特約${c.lawyerSpec}</span>${c.prevInsurer?`<br><span style="font-size:10px;color:var(--sub);margin-top:2px;display:inline-block;">前契約: ${c.prevInsurer}</span>`:''}
+          <span class="chip ${c.chipCls}">${c.insurer}</span><span class="chip law-${c.lawyerSpec==='あり'?'on':'off'}">弁護士特約${c.lawyerSpec}</span>
+          ${c.prevInsurer?`<br><span style="font-size:10px;color:var(--sub);margin-top:2px;display:inline-block;">前契約: ${c.prevInsurer}</span>`:''}
+          ${c.emergencyTel?`<br><a href="tel:${c.emergencyTel}" style="font-size:11px;color:#e67e22;text-decoration:none;font-weight:700;margin-top:3px;display:inline-block;">🚨 事故連絡 ${c.emergencyTel}</a>`:''}
           <div class="shaken-row">
             <span class="shaken-tag ${days(c.shakenExpiry)!==null&&days(c.shakenExpiry)<=180?'exp-near':''}">🔧 車検 ${toReiwa(c.shakenExpiry)}</span>
             <span class="shaken-tag">💴 自動車税 ¥${c.autoTax?c.autoTax.toLocaleString():'—'}/年</span>
